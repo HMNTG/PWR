@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <mpi.h>
 #include <time.h>
+
+// pid 1
 #include <test.h>
 
 #define N 1000 // Größe des Gleichungssystems
@@ -14,7 +16,19 @@ void fill_matrix(double A[N][N+1]) {
 
 int main(int argc, char *argv[]) {
     //TODO remove me
-    foo();
+    //foo();
+
+    //int pid = atoi(argv[2]);
+    //printf("pid: %d\n",argc);
+    printf("hello");
+    //for (int i =0;i<argc;++i) {
+    //    printf(argv[i]);
+    //    printf("\n");
+    //}
+    fflush(stdout);
+    return;
+
+#if 0
     int rank, size;
     static double A[N][N+1];
     static double x[N];
@@ -22,10 +36,19 @@ int main(int argc, char *argv[]) {
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
-#if 0
-    printf("Hello from process %d of %d\n", rank, size);
-    fflush(stdout);
-#endif
+//#if 0
+//    printf("Hello from process %d of %d\n", rank, size);
+//    fflush(stdout);
+//#endif
+    //switch (pid)
+    //{
+    //case 1:
+    //    /* code */
+    //    break;
+    
+    //default:
+    //    break;
+    //}
 
     if (rank == 0) {
         srand((unsigned int)time(NULL));
@@ -62,4 +85,5 @@ int main(int argc, char *argv[]) {
 
     MPI_Finalize();
     return 0;
+#endif
 }
