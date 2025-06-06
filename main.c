@@ -19,6 +19,10 @@ int main(int argc, char *argv[]) {
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
+#if 0
+    printf("Hello from process %d of %d\n", rank, size);
+    fflush(stdout);
+#endif
 
     if (rank == 0) {
         srand((unsigned int)time(NULL));
