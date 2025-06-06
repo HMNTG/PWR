@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <mpi.h>
 #include <time.h>
+#include <test.h>
 
 #define N 1000 // Größe des Gleichungssystems
 
@@ -12,6 +13,8 @@ void fill_matrix(double A[N][N+1]) {
 }
 
 int main(int argc, char *argv[]) {
+    //TODO remove me
+    foo();
     int rank, size;
     static double A[N][N+1];
     static double x[N];

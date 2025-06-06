@@ -8,8 +8,20 @@ find_package(MPI REQUIRED)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+include_directories(mpi_program "src/")
+
+# src files
+file(GLOB_RECURSE all_SRC
+	"src/*.c"
+)
+set(src)
+list(APPEND src
+	${all_SRC}
+	main.c
+)
+
 # Executable bauen
-add_executable(mpi_program main.c)
+add_executable(mpi_program ${src})
 
 # MPI einbinden
 target_include_directories(mpi_program PUBLIC ${MPI_C_INCLUDE_PATH})
