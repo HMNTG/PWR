@@ -30,14 +30,20 @@ int main(int argc, char *argv[]) {
     {
     case 0:
         dbg_sec(1); // print helper function
-        gauss_elimination();
+        gauss_elimination_par();
         dbg_sec(2);
+        break;
+    case 1:
+        if (rank==0) {
+            dbg_sec(1); // print helper function
+            gauss_sequential(NULL,NULL,10);
+            dbg_sec(2);
+        }
         break;
     default:
         printf("id invalid\n");
         break;
     }
-
 
     MPI_Finalize();
     return 0;
