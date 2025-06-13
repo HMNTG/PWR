@@ -1,6 +1,0 @@
-{
-  "label": "Clean Build",
-  "type": "shell",
-  "command": "rd /s /q build",
-  "problemMatcher": []
-}
