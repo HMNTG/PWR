@@ -29,15 +29,15 @@ int main(int argc, char *argv[]) {
     switch (exercise)
     {
     case 0:
-        dbg_sec(1); // print helper function
+        dbg_sec_mpi("one"); // print helper function
         gauss_elimination_par();
-        dbg_sec(2);
+        dbg_sec_mpi("two");
         break;
     case 1:
         if (rank==0) {
-            dbg_sec(1); // print helper function
+            dbg_sec_mpi("one"); // print helper function
             gauss_sequential(NULL,NULL,10);
-            dbg_sec(2);
+            dbg_sec_mpi("two");
         }
         break;
     default:
