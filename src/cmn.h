@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 /**
  * @brief print command line args
@@ -13,15 +14,23 @@ void dbg_sec_mpi(char* name);
 
 /**
  * @brief print c style matrix
- * @param b pointer double matrix of size nxm
  * @param n rows
  * @param m columns
+ * @param a pointer double matrix of size nxm
 */
-void print_mat(double** a, int n, int m);
+void print_mat_p(int n, int m, double* a);
+
+/**
+ * @brief print c style matrix
+ * @param n rows
+ * @param m columns
+ * @param a pointer of pointers double matrix of size nxm
+*/
+void print_mat_pp(int n, int m,double** a);
 
 /**
  * @brief print c style array of double
- * @param b pointer double array of size n
  * @param n size of the array
+ * @param b pointer double array of size n
 */
-void print_vec(double* b, int n);
+void print_vec(int n, double* b);

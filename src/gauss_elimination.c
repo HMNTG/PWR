@@ -107,9 +107,9 @@ double* gauss_sequential(double** a, double* b, int n) {
     //    b[i] = (double) i;
     //}
     printf("a=\n");
-    print_mat(a,n,n);
+    print_mat_pp(n,n,a);
     printf("b=\n");
-    print_vec(b,n);
+    print_vec(n,b);
     printf("\n");
 
     double* x, sum;
@@ -124,9 +124,9 @@ double* gauss_sequential(double** a, double* b, int n) {
         if (k != r) exchange_row(a,b,r,k,n);
         printf("exchange row:\n");
         printf("a=\n");
-        print_mat(a,n,n);
+        print_mat_pp(n,n,a);
         printf("b=\n");
-        print_vec(b,n);
+        print_vec(n,b);
         for (i=k+1; i < n; i++) {
             l[i] = a[i][k]/a[k][k];
             for (j=k; j < n; j++)
@@ -135,9 +135,9 @@ double* gauss_sequential(double** a, double* b, int n) {
         }
         printf("compute:\n");
         printf("a=\n");
-        print_mat(a,n,n);
+        print_mat_pp(n,n,a);
         printf("b=\n");
-        print_vec(b,n);
+        print_vec(n,b);
         printf("\n");
     }
     for (k = n-1; k >= 0; k--) {
@@ -148,7 +148,7 @@ double* gauss_sequential(double** a, double* b, int n) {
     }
     
     //return x;
-    print_vec(x,n);
+    print_vec(n,x);
     free(x);
 
     //TODO do not free param
