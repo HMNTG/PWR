@@ -3,6 +3,8 @@
 // exercises
 // ex 1
 #include "src/gauss_elimination.h"
+// ex 2
+#include "PWR25_Uebung09_Template.h"
 // exercises
 
 #include <stdio.h>
@@ -18,10 +20,10 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    int exercise=0; // note, all cores require to evaluate this
+    int exercise=2; // note, all cores require to evaluate this
     print_args(argc,argv);
-    if (argc>1)
-        exercise = strtol(argv[1],NULL,10);
+    //if (argc>1)
+    //    exercise = strtol(argv[1],NULL,10);
 #if 0
     printf("Hello from process %d of %d\n", rank, size);
     fflush(stdout);
@@ -40,6 +42,8 @@ int main(int argc, char *argv[]) {
             dbg_sec_mpi("two");
         }
         break;
+    case 2:
+        PWR_ex9_main(argc,argv);
     default:
         printf("id invalid\n");
         break;
