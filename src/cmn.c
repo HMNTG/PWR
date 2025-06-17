@@ -21,11 +21,16 @@ void print_mat_p(int n, int m, double* a) {
     for (int i=0;i<n;++i)
         b[i] = malloc(n*sizeof(double));
 
+    //TODOff memcpy here
     for (int i=0;i<n;++i)
         for (int j=0;j<m;++j) {
             b[i][j] = a[i*m + j];
         }
     print_mat_pp(n,m,b);
+
+    for (int i=0;i<n;++i)
+        free(b[i]);
+    free(b);
 }
 
 void print_mat_pp(int n, int m, double** a) {

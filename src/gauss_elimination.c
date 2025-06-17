@@ -80,6 +80,8 @@ void exchange_row(double** a, double* b, int r, int k, int n) {
         a[k][i] = temp_line[i];
     b[k] = b[r];
     b[r] = temp_b;
+
+    free(temp_line);
 }
 
 double* gauss_sequential(double** a, double* b, int n) {
