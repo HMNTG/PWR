@@ -20,6 +20,16 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
+#if 0 // debug helper in visual studio, attach debugger to running process
+    if (rank==0) {
+        printf("Press any Key to continue!\n");
+        fflush(stdout);
+        getchar(); 
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+#endif
+
+
     int exercise=2; // note, all cores require to evaluate this
     print_args(argc,argv);
     if (argc>1)
