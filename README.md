@@ -4,7 +4,7 @@
 
 - [ ] completed
 
-```cpp
+```c
 int j, m, p, local_m, tag=0;
 char message[100];
 float local_dot, dot;
@@ -33,7 +33,7 @@ MPI_Finalize();
 
 - [ ] completed
 
-```cpp
+```c
 local_n = n/p;
 for (i=0; i<local_n; i++)
     local_c[i] = 0;
@@ -57,7 +57,7 @@ MPI_Allgather(local_c,local_n,MPI_DOUBLE,
 - [x] completed
 - [ ] TODO need to abstract dynamic input
 
-```cpp
+```c
 double *gauss_sequential (double **a, double *b) {
     double *x, sum, l[MAX_SIZE];
     int i,j,k,r;
@@ -87,7 +87,7 @@ double *gauss_sequential (double **a, double *b) {
 
 - [ ] completed
 
-```cpp
+```c
 double *gauss_cyclic (double **a, double *b)
 {
     double *x, l[MAX_SIZE], *buf;
@@ -145,7 +145,7 @@ double *gauss_cyclic (double **a, double *b)
 
 - [ ] completed
 
-```cpp
+```c
 double * gauss_double_cyclic (double **a, double *b)
 {
     double *x, *buf, *elim_buf;
@@ -216,3 +216,124 @@ double * gauss_double_cyclic (double **a, double *b)
 - [ ] Zyklische Reduktion für Bandmatrizen
     - [ ] Algorithmus der zyklischen Reduktion für Bandmatrizen
         - [ ] alg S223
+
+# PWR25_5_Klassische_Iterationsverfahren_und_Cholesky-Faktorisierung
+
+## S242 Jacobi-Verfahren
+
+- [x] completed
+
+```c
+int Parallel_Jacobi(int n, int p, int max_it, float tol) {
+    int i_loc, i_global, j, i, n_loc;
+    double *x_tmp1[GLOB_MAX], *x_tmp2[GLOB_MAX];
+    double *x_old, *x_new, *tmp;
+
+    n_loc = n/p; /* lokale Blockgroesse */
+    MPI_Allgather(loc_b, n_loc, MPI_DOUBLE, x_tmp1, n_loc,
+                  MPI_DOUBLE, MPI_COMM_WORLD);
+
+    x_new = x_tmp1; x_old = x_tmp2;
+
+    do {
+        tmp = x_new; x_new = x_old; x_old = tmp;
+        for (i_loc = 0; i_loc < n_loc; i_loc++) {
+            i_global = i_loc + me * n_loc;
+            loc_x[i_loc] = loc_b[i_loc];
+
+            for (j = 0; j < i_global; j++)
+                loc_x[i_loc] = loc_x[i_loc] - loc_A[i_loc][j] * x_old[j];
+
+            for (j = i_global+1; j < n; j++)
+                loc_x[i_loc] = loc_x[i_loc] - loc_A[i_loc][j] * x_old[j];
+
+            loc_x[i_loc] = loc_x[i_loc]/ loc_A[i_loc][i_global];
+        }
+        MPI_Allgather(loc_x, n_loc, MPI_DOUBLE, x_new, n_loc,
+                      MPI_DOUBLE, MPI_COMM_WORLD);
+    } while ((it_num < max_it) && (distance(x_old,x_new,n) >= tol));
+}
+```
+
+## S244 Gauß-Seidel-Verfahren
+
+- [x] completed
+
+```c
+n_local = n/p;
+do {
+    delta_x = 0.0;
+    for (i = 0; i < n; i++) {
+        s_k = 0.0;
+        for (j = 0; j < n_local; j++)
+            if (j + me * n_local != i)
+                s_k = s_k + local_A[i][j] * x[j];
+        root = i/n_local;
+        i_local = i % n_local;
+        MPI_Reduce(&s_k, &x[i_local], 1, MPI_FLOAT, MPI_SUM, root,
+                   MPI_COMM_WORLD);
+        if (me == root) {
+            x_new = (b[i_local] - x[i_local]) / local_A[i][i_local];
+            delta_x = max(delta_x, abs(x[i_local] - x_new));
+            x[i_local] = x_new;
+        }
+    }
+    MPI_Allreduce(&delta_x, &global_delta, 1, MPI_FLOAT,
+                  MPI_MAX, MPI_COMM_WORLD);
+} while(global_delta > tol);
+```
+
+## S253 Gauß-Seidel dünnbesetzt: parallele Implementierung
+
+- [ ] completed
+
+```c
+sqn = sqrt(n);
+do {
+    for (l = 1; l <= sqn; l++) {
+        for (j = me; j < l; j+=p) {
+            i = l + j * (sqn-1) - 1; /* starte Numerierung bei 0 */
+            x[i] = 0;
+            if (i-sqn >= 0) x[i] = x[i] - a[i][i-sqn] * x[i-sqn];
+            if (i > 0) x[i] = x[i] - a[i][i-1] * x[i-1];
+            if (i+1 < n) x[i] = x[i] - a[i][i+1] * x[i+1];
+            if (i+sqn < n) x[i] = x[i] - a[i][i+sqn] * x[i+sqn];
+            x[i] = (x[i] + b[i]) / a[i][i]; }
+        collect_elements(x,1); }
+    for (l = 2; l <= sqn; l++) {
+        for (j = me -1 +1; (j <= sqn -1) && (j >= 0); j+=p) {
+            i = l * sqn + j * (sqn-1) - 1; x[i] = 0;
+            if (i-sqn >= 0) x[i] = x[i] - a[i][i-sqn] * x[i-sqn];
+            if (i > 0) x[i] = x[i] - a[i][i-1] * x[i-1];
+            if (i+1 < n) x[i] = x[i] - a[i][i+1] * x[i+1];
+            if (i+sqn < n) x[i] = x[i] - a[i][i+sqn] * x[i+sqn];
+            x[i] = (x[i] + b[i]) / a[i][i]; }
+        collect_elements(x,1); }
+} while(convergence_test() < tol);
+```
+
+## S260 Rot-Schwarz-Anordnung
+
+- [ ] completed
+
+```c
+local_nr = nr/p; local_ns = ns/p;
+do {
+    mestartr = me * local_nr;
+    for (i= mestartr; i < mestartr + local_nr; i++) {
+        xr[i] = 0;
+        for (j ∈ N(i))
+            xr[i] = xr[i] + a[i][j] * xs[j] ;
+        xr[i] = (xr[i]+b[i]) / a[i][i] ;
+    }
+    collect_elements(xr);
+    mestrarts = me * local_ns + nr;
+    for (i= mestrarts; i < mestrarts + local_ns; i++) {
+        xs[i] = 0;
+        for (j ∈ N(i))
+            xs[i] = xs[i] + a[i+nr][j] * xr[j];
+        xs[i] = (xs[i] + b[i+nr]) / a[i+nr][i+nr];
+    }
+    collect_elements(xs);
+} while (convergence_test());
+```
