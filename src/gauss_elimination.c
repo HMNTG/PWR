@@ -85,29 +85,6 @@ void exchange_row(double** a, double* b, int r, int k, int n) {
 }
 
 double* gauss_sequential(double** a, double* b, int n) {
-    if (a || b) {
-        printf("we dont use a/b for now\n"); //TODO(skade)
-        return (double*) NULL;
-    }
-    n=3;
-    a = malloc(n * sizeof(double*));
-    b = malloc(n * sizeof(double));
-
-    for (int i=0;i<n;++i)
-        a[i] = malloc(n*sizeof(double));
-    // simple example
-    a[0][0] =  2;  a[0][1] =  1;  a[0][2] = -1;  b[0] =  8;
-    a[1][0] = -3;  a[1][1] = -1;  a[1][2] =  2;  b[1] = -11;
-    a[2][0] = -2;  a[2][1] =  1;  a[2][2] =  2;  b[2] = -3;
-
-    // auto fill
-    //for (int i=0;i<n;++i) {
-    //    a[i] = malloc(n * sizeof(double));
-    //    for (int j=0;j<n;++j) {
-    //        a[i][j] = (double) i*n + j;
-    //    }
-    //    b[i] = (double) i;
-    //}
     printf("a=\n");
     print_mat_pp(n,n,a);
     printf("b=\n");
@@ -115,8 +92,7 @@ double* gauss_sequential(double** a, double* b, int n) {
     printf("\n");
 
     double* x, sum;
-    //double l[MAX_SIZE];
-    double* l = malloc(n * sizeof(double));
+    double* l = malloc(n * sizeof(double)); //double l[MAX_SIZE];
 
     int i,j,k,r;
     x = (double*) malloc(n * sizeof(double));
@@ -153,10 +129,6 @@ double* gauss_sequential(double** a, double* b, int n) {
     print_vec(n,x);
     free(x);
 
-    //TODO do not free param
-    for (int i=0;i<n;++i)
-        free(a[i]);
-    free(a);
-    free(b);
+    // do not free param for this example
     return NULL;
 }
