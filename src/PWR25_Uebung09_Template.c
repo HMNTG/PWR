@@ -112,18 +112,18 @@ distribute_cols(int n, int m, double *a, int *local_m, double **local_a, MPI_Com
 
 
 double distance(double *x0, double *x1, int n, MPI_Comm comm) {
-    double l[2] = {0, 0}, g[2];
+    double local_sum[2] = {0, 0}, global_sum[2];
 
     // TODO: lokale Abstandsberechnung
-    for (int i = 0; i < n; ++i) {
+	for (int i = 0; i < n; ++i) {
         // S247
-        l[0] = (x0[0] - x1[0]); //TODO
-        l[1] = 0.;
+        local_sum[1] += x0[i];
+        local_sum[0] += (x1[i] - x0[i]) * (x1[i] - x0[i]);
     }
 
-    MPI_Allreduce(l, g, 2, MPI_DOUBLE, MPI_SUM, comm);
+    MPI_Allreduce(local_sum, global_sum, 2, MPI_DOUBLE, MPI_SUM, comm);
 
-    return sqrt(g[0]) / sqrt(g[1]);
+    return sqrt(global_sum[0]) / sqrt(global_sum[1]);
 }
 
 
@@ -159,15 +159,12 @@ int parallel_jacobi(int n, int local_n, double *local_a, double *local_b, double
 
             // TODO: Subtrahiere die Werte der zu i_local gehörigen Zeile multipliziert mit dem entsprechendem x_old
             //       Das i_global Element darf NICHT betrachtet werden!
-            for (int j=0;j<n;++j) {
-                if (i_local==i_global)
-                    local_x[i_local] = local_x[i_local] - 0.;
-                else
-                    local_x[i_local] = local_x[i_local] - local_a[i_local*n + j]*(*x_old);
-            }
+            int j;
+            for (j = 0; j < i_global; ++j) local_x[i_local] -= local_a[i_local * n + j] * x_old[j];
+            for (j = i_global + 1; j < n; ++j)  local_x[i_local] -= local_a[i_local * n + j] * x_old[j];
 
             // TODO: Dividiere das local_x mit dem aktuellem Wert der Matrix A an Stelle von i_global
-            local_x[i_local] /= local_x[i_local*n + i_global];
+            local_x[i_local] /= local_a[i_local*n + i_global];
         }
 
         MPI_Allgather(local_x, local_n, MPI_DOUBLE, x_new, local_n, MPI_DOUBLE, comm);
